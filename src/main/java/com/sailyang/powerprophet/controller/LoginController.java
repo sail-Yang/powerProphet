@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
-
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +41,9 @@ public class LoginController {
                 session.setAttribute("user",user);
                 String token = createJWT(user.getUsername(),user.getPassword());
                 responseData.put("token",token);
+                responseData.put("model", user.getModel());
+                responseData.put("password",user.getPassword());
+                responseData.put("email",user.getEmail());
                 return new R(20000,"login successful",responseData);
             }else{
                 return new R(-1,"密码错误，请重新输入",null);
@@ -132,11 +133,91 @@ public class LoginController {
                 session.setAttribute("user",user);
                 String token = createJWT(user.getUsername(),user.getPassword());
                 responseData.put("token",token);
+                responseData.put("model", user.getModel());
+                responseData.put("password",user.getPassword());
+                responseData.put("email",user.getEmail());
                 return new R(20000,"登录成功",responseData);
             }else{
-                return new R(-1,"密码错误，请重新输入",null);
+                return new R(-1,"验证码错误，请重新输入",null);
             }
         }
 
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "/update/account")
+    @ResponseBody
+    public R updateAccount(@RequestBody SignUpInfo reqUser, HttpSession session){
+        String username = reqUser.getUsername();
+        String password = reqUser.getPassword();
+        String email = reqUser.getEmail();
+        String emailCode = reqUser.getCode();
+        String verCodeFromRedis = (String) redisTemplate.opsForValue().get(email);
+        if(!emailCode.equals(verCodeFromRedis)){
+            return new R(-1,"验证码错误，更新失败",null);
+        }
+        username = HtmlUtils.htmlEscape(username);
+        User user = userService.getByUserName(username);
+        if(user != null){
+            user.setEmail(email);
+            user.setPassword(password);
+            boolean result;
+            try {
+                result = userService.update(user);
+            } catch (Exception e) {
+                return new R(-1,"更新失败，该用户名已存在",null);
+            }
+
+            if(result) {
+                Map<String,Object> responseData = new HashMap<>();
+                session.setAttribute("user",user);
+                String token = createJWT(user.getUsername(),user.getPassword());
+                responseData.put("token",token);
+                return new R(20000,"update successful",responseData);
+            }else{
+                return new R(-1,"更新失败，数据库错误",null);
+            }
+        }else{
+            user = userService.getByEmail(email);
+            if(user != null){
+                user.setUsername(username);
+                user.setPassword(password);
+                boolean result;
+                try {
+                    result = userService.update(user);
+                } catch (Exception e) {
+                    return new R(-1,"更新失败，该用邮箱已存在",null);
+                }
+                if(result) {
+                    Map<String,Object> responseData = new HashMap<>();
+                    String token = createJWT(user.getUsername(),user.getPassword());
+                    session.setAttribute("user",user);
+                    responseData.put("token",token);
+                    return new R(20000,"update successful",responseData);
+                }else{
+                    return new R(-1,"更新失败，数据库错误",null);
+                }
+            }else{
+                return new R(-1,"该用户不存在",null);
+            }
+        }
+
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "/update/model")
+    public R updateModel(@RequestParam("username") String username,@RequestParam("model") String model, HttpSession session){
+        User user = userService.getByUserName(HtmlUtils.htmlEscape(username));
+        if( user == null){
+            return new R(-1,"更新失败，该用户不存在",null);
+        }
+        user.setModel(model);
+        session.setAttribute("user",user);
+        boolean result = userService.update(user);
+        if(result) {
+            return new R(20000,"update successful",null);
+        }else{
+            return new R(-1,"更新失败，数据库错误",null);
+        }
     }
 }
