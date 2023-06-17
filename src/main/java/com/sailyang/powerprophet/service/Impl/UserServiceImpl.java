@@ -44,14 +44,9 @@ public class UserServiceImpl implements UserService {
     public User getByUserName(String userName){ return userDao.selectByUserName(userName);}
 
     @Override
-    public List<String> getUserNames() { return userDao.selectUserNames(); }
+    public User getByEmail(String email){ return userDao.selectByEmail(email); }
 
     @Override
-    public IPage<User> getPage(int currentPage,int pageSize){
-        IPage page = new Page(currentPage,pageSize);
-        userDao.selectPage(page,null);
-        return page;
-    }
-
+    public List<String> getUserNames() { return userDao.selectUserNames(); }
 
 }

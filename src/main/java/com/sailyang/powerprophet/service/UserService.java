@@ -1,6 +1,5 @@
 package com.sailyang.powerprophet.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sailyang.powerprophet.pojo.User;
 
 import java.util.List;
@@ -11,7 +10,7 @@ public interface UserService {
     Boolean delete(Integer id);
     User getById(Integer id);
     User getByUserName(String userName);
+    User getByEmail(String email);
     List<User> getAll();
-    IPage<User> getPage(int currentPage, int pageSize);
     List<String> getUserNames();
 }

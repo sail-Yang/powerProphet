@@ -1,7 +1,6 @@
 package com.sailyang.powerprophet.controller;
 
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sailyang.powerprophet.pojo.R;
 import com.sailyang.powerprophet.pojo.User;
 import com.sailyang.powerprophet.service.UserService;
@@ -44,12 +43,6 @@ public class UserController {
     public R getById(@RequestParam(value = "id") Integer id){
         User user = userService.getById(id);
         return new R(user != null ? 200 : -1,"get user success",user);
-    }
-
-    @GetMapping("/getByPage")
-    public R getAll(@RequestParam(value = "currentpage") int currentPage, @RequestParam(value = "pagesize") int pageSize){
-        IPage<User> page =  userService.getPage(currentPage,pageSize);
-        return new R(page != null ? 200 : -1,"get page success",page);
     }
 
 }

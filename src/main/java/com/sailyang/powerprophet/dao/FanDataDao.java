@@ -3,16 +3,15 @@ package com.sailyang.powerprophet.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sailyang.powerprophet.pojo.Fan;
 import com.sailyang.powerprophet.pojo.FanData;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import com.sailyang.powerprophet.pojo.PreResult;
+import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
 public interface FanDataDao extends BaseMapper<FanData> {
-    @Select("DELETE FROM fandata where fan_id=#{fan_id}")
+    @Select("DELETE FROM fandata where fan_id=#{fanid}")
     int deleteByFanId(@Param("fanid")Integer fanId);
 
     @Select("select distinct fan_id from fandata")
@@ -26,4 +25,15 @@ public interface FanDataDao extends BaseMapper<FanData> {
 
     @Select("select * from fandata where fan_id = #{fanid} AND datatime >= #{bgtime} AND datatime <= #{edtime}")
     List<FanData> selectFanDataListByFanIdAndPeriod(@Param("bgtime") Timestamp begintime,@Param("edtime") Timestamp endtime,@Param("fanid") Integer fanId);
+
+    @Select("select datatime,prepower from fandata where fan_id = #{fanid} AND datatime >= #{bgtime} AND datatime <= #{edtime}")
+    List<PreResult> selectPrePowerByFanIdAndPeriod(@Param("bgtime") Timestamp begintime,@Param("edtime") Timestamp endtime,@Param("fanid") Integer fanId);
+
+    @Update({"<script>",
+            "<foreach collection='list' item= 'item' index ='index' separator=';'>",
+            "insert into fandata(power,yd15,datatime,fan_id) values(#{item.power},#{item.yd15},#{item.datatime},#{fanid})",
+            "on duplicate key update power = #{item.power},yd15 = #{item.yd15}",
+            "</foreach>",
+            "</script>"})
+    int updatePreResultByFanId(@Param("fanid")Integer fanId,@Param("list") List<PreResult> preResultList);
 }

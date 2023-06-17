@@ -13,6 +13,9 @@ public interface UserDao extends BaseMapper<User> {
     @Select("select * from users where username = #{username}")
     User selectByUserName(@Param("username") String userName);
 
+    @Select("select * from users where email = #{email}")
+    User selectByEmail(@Param("email") String email);
+
     @Select("select username from users")
     List<String> selectUserNames();
 }

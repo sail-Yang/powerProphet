@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sailyang.powerprophet.dao.FanDataDao;
 import com.sailyang.powerprophet.pojo.FanData;
+import com.sailyang.powerprophet.pojo.PreResult;
 import com.sailyang.powerprophet.service.FanDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,11 @@ public class FanDataServiceImpl extends ServiceImpl<FanDataDao,FanData> implemen
     @Override
     public Boolean update(FanData fanData) {
         return fanDataDao.updateById(fanData) > 0;
+    }
+
+    @Override
+    public Boolean updates(Integer fanId, List<PreResult> preResultList) {
+        return fanDataDao.updatePreResultByFanId(fanId,preResultList) > 0;
     }
 
     @Override
@@ -73,4 +79,10 @@ public class FanDataServiceImpl extends ServiceImpl<FanDataDao,FanData> implemen
     public List<FanData> getByFanIdAndPeriod(Timestamp beginTime, Timestamp endTime,Integer fanId) {
         return fanDataDao.selectFanDataListByFanIdAndPeriod(beginTime,endTime,fanId);
     }
+
+    @Override
+    public  List<PreResult> getPrePowerByFanIdAndPeriod(Timestamp beginTime, Timestamp endTime,Integer fanId){
+        return fanDataDao.selectPrePowerByFanIdAndPeriod(beginTime,endTime,fanId);
+    }
+
 }
