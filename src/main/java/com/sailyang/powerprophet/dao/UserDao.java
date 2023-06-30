@@ -18,4 +18,7 @@ public interface UserDao extends BaseMapper<User> {
 
     @Select("select username from users")
     List<String> selectUserNames();
+
+    @Select("select * from users where id = #{id}")
+    User selectById(@Param("id") Integer id);
 }

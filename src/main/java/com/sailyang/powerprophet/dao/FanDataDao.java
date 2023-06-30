@@ -36,4 +36,10 @@ public interface FanDataDao extends BaseMapper<FanData> {
             "</foreach>",
             "</script>"})
     int updatePreResultByFanId(@Param("fanid")Integer fanId,@Param("list") List<PreResult> preResultList);
+
+    @Select("SELECT COUNT(DISTINCT id) FROM fans")
+    int selectFans();
+
+    @Select("SELECT COUNT(*) FROM fandata")
+    int selectDatas();
 }

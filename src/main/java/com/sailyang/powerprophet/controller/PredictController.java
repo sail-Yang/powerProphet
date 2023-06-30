@@ -1,8 +1,14 @@
 package com.sailyang.powerprophet.controller;
+import com.sailyang.powerprophet.pojo.FanDataLogItem;
 import com.sailyang.powerprophet.pojo.PreResult;
 import com.sailyang.powerprophet.pojo.R;
+import com.sailyang.powerprophet.pojo.User;
+import com.sailyang.powerprophet.service.FanDataLogItemService;
 import com.sailyang.powerprophet.service.FanDataService;
+import com.sailyang.powerprophet.service.OutilerService;
+import com.sailyang.powerprophet.service.UserService;
 import com.sailyang.powerprophet.utils.PredictUtils;
+import com.sailyang.powerprophet.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.sailyang.powerprophet.utils.JsonUtils.databinds;
+import static com.sailyang.powerprophet.utils.TokenUtils.createJWT;
 
 @RestController
 @RequestMapping("/power/predict")
@@ -25,14 +32,33 @@ public class PredictController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private OutilerService outilerService;
+
+    @Autowired
+    private FanDataLogItemService fanDataLogItemService;
+    /*
+
+    * */
     @CrossOrigin
     @GetMapping(value = "/realtime")
     @ResponseBody
-    public R getRealTimePower(@RequestParam(value = "fanid") Integer fanId, @RequestParam(value = "model") String model){
+    public R getRealTimePower(@RequestParam(value="username") String userName, @RequestParam(value = "fanid") Integer fanId, @RequestParam(value = "model") String model){
+        Timestamp date = TimeUtils.getNowTime();
+        //判断当前用户是否存在
+        User user = userService.getByUserName(userName);
+        if(user == null){
+            return new R(-1, "预测失败,该用户不存在", null);
+        }
+        //调用深度学习模型
         String url = "http://localhost:5000/realtime";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("fanid", fanId).queryParam("model", model);
         ResponseEntity<String> results = restTemplate.exchange( builder.build().encode().toUri(), HttpMethod.GET, null, String.class);
         if(results.getStatusCode().is2xxSuccessful()){
+            /*从深度学习框架获取json格式的预测数据*/
             List<PreResult> preResultList = databinds(results.getBody());
             List<PreResult> prePowerList = fanDataService.getPrePowerByFanIdAndPeriod(preResultList.get(0).getDatatime(),preResultList.get(preResultList.size() - 1).getDatatime(),fanId);
             List<PreResult> resultList = PredictUtils.joinPreResult(preResultList, prePowerList);
@@ -40,11 +66,19 @@ public class PredictController {
             responseData.put("fanDataList",resultList);
             boolean res = fanDataService.updates(1,preResultList);
             if(!res){
+                /* 生成日志记录 */
+                fanDataLogItemService.save(new FanDataLogItem(user.getId(),fanId,"real",date,preResultList.get(0).getDatatime(),preResultList.get(preResultList.size() - 1).getDatatime(),"fail",user.getModel()));
                 return new R(-1, "预测失败", null);
             }else{
+                /* 生成日志记录 */
+                FanDataLogItem newItem = new FanDataLogItem(user.getId(),fanId,"real",date,preResultList.get(0).getDatatime(),preResultList.get(preResultList.size() - 1).getDatatime(),"success",user.getModel());
+                fanDataLogItemService.save(newItem);
+                outilerService.addOutliers(newItem.getId(),fanId,user.getId(),preResultList);
                 return new R(20000, "预测成功", responseData);
             }
         }else{
+            /* 生成日志记录 */
+            fanDataLogItemService.save(new FanDataLogItem(user.getId(), fanId,"real",date,null,null,"fail",user.getModel()));
             return new R(-1, "预测失败", null);
         }
     }
@@ -52,7 +86,13 @@ public class PredictController {
     @CrossOrigin
     @GetMapping(value = "/period")
     @ResponseBody
-    public R getPeriodPower(@RequestParam(value = "fanid") Integer fanId,@RequestParam(value = "bgtime") Timestamp beginTime, @RequestParam(value ="edtime") Timestamp endTime,Integer hours, @RequestParam(value = "model") String model ){
+    public R getPeriodPower(@RequestParam(value="username") String userName, @RequestParam(value = "fanid") Integer fanId,@RequestParam(value = "bgtime") Timestamp beginTime, @RequestParam(value ="edtime") Timestamp endTime,Integer hours, @RequestParam(value = "model") String model ){
+        Timestamp date = TimeUtils.getNowTime();
+        //判断当前用户是否存在
+        User user = userService.getByUserName(userName);
+        if(user == null){
+            return new R(-1, "预测失败,该用户不存在", null);
+        }
         String url = "http://localhost:5000/period";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("fanid", fanId)
@@ -65,14 +105,19 @@ public class PredictController {
 //            System.out.println(results.getBody());
             List<PreResult> preResultList = databinds(results.getBody());
             if(preResultList == null){
+                fanDataLogItemService.save(new FanDataLogItem(user.getId(),fanId,"period",date,beginTime,endTime,"fail",user.getModel()));
                 return new R(-1, "数据集不足，预测失败", null);
             }
             List<PreResult> prePowerList = fanDataService.getPrePowerByFanIdAndPeriod(preResultList.get(0).getDatatime(),preResultList.get(preResultList.size() - 1).getDatatime(),fanId);
             List<PreResult> resultList = PredictUtils.joinPreResult(preResultList, prePowerList);
             Map<String,Object> responseData = new HashMap<>();
             responseData.put("fanDataList",resultList);
+            FanDataLogItem newItem = new FanDataLogItem(user.getId(),fanId,"period",date,beginTime,endTime,"success",user.getModel());
+            fanDataLogItemService.save(newItem);
+            outilerService.addOutliers(newItem.getId(),fanId,user.getId(),preResultList);
             return new R(20000, "预测成功", responseData);
         }else{
+            fanDataLogItemService.save(new FanDataLogItem(user.getId(),fanId,"period",date,beginTime,endTime,"fail",user.getModel()));
             return new R(-1, "预测失败", null);
         }
     }

@@ -1,7 +1,5 @@
 package com.sailyang.powerprophet.service.Impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sailyang.powerprophet.dao.UserDao;
 import com.sailyang.powerprophet.pojo.User;
 import com.sailyang.powerprophet.service.UserService;

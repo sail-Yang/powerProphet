@@ -37,6 +37,8 @@ public class LoginController {
             return new R(-1,msg,null);
         }else{
             if(user.getPassword().equals(reqUser.getPassword())) {
+                user.setVisitNums(user.getVisitNums() + 1);
+                userService.update(user);
                 Map<String,Object> responseData = new HashMap<>();
                 session.setAttribute("user",user);
                 String token = createJWT(user.getUsername(),user.getPassword());
@@ -44,6 +46,7 @@ public class LoginController {
                 responseData.put("model", user.getModel());
                 responseData.put("password",user.getPassword());
                 responseData.put("email",user.getEmail());
+                responseData.put("visitNums",user.getVisitNums());
                 return new R(20000,"login successful",responseData);
             }else{
                 return new R(-1,"密码错误，请重新输入",null);

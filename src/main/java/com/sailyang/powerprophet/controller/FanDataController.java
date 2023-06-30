@@ -51,4 +51,30 @@ public class FanDataController {
             return  new R(-1,"获取错误,该记录不存在",null);
         }
     }
+
+    @CrossOrigin
+    @GetMapping(value = "/datas")
+    @ResponseBody
+    public R getDatas(){
+        Integer datas = fanDataService.getDatas();
+        if(datas == 0){
+            return new R(-1,"获取错误,无记录",null);
+        }
+        Map<String,Object> responseData = new HashMap<>();
+        responseData.put("datas", datas);
+        return new R(20000,"获取成功",responseData);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/fans")
+    @ResponseBody
+    public R getFans(){
+        Integer fans = fanDataService.getFans();
+        if(fans == 0){
+            return new R(-1,"获取错误,无记录",null);
+        }
+        Map<String,Object> responseData = new HashMap<>();
+        responseData.put("fans",fans);
+        return new R(20000,"获取成功",responseData);
+    }
 }

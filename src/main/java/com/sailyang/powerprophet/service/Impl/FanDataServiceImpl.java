@@ -5,8 +5,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sailyang.powerprophet.dao.FanDataDao;
+import com.sailyang.powerprophet.dao.FanDataLogItemDao;
+import com.sailyang.powerprophet.dao.OutlierDao;
+import com.sailyang.powerprophet.dao.UserDao;
 import com.sailyang.powerprophet.pojo.FanData;
+import com.sailyang.powerprophet.pojo.Outlier;
 import com.sailyang.powerprophet.pojo.PreResult;
+import com.sailyang.powerprophet.pojo.User;
 import com.sailyang.powerprophet.service.FanDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,4 +90,13 @@ public class FanDataServiceImpl extends ServiceImpl<FanDataDao,FanData> implemen
         return fanDataDao.selectPrePowerByFanIdAndPeriod(beginTime,endTime,fanId);
     }
 
+    @Override
+    public Integer getDatas() {
+        return fanDataDao.selectDatas();
+    }
+
+    @Override
+    public Integer getFans() {
+        return fanDataDao.selectFans();
+    }
 }

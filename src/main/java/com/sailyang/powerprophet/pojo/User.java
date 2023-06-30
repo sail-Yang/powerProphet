@@ -27,6 +27,12 @@ public class User implements Serializable {
     private String email;
     @TableField("model")
     private String model;
+    @TableField("min_right")
+    private Integer minRight;
+    @TableField("max_right")
+    private Integer maxRight;
+    @TableField("visit_nums")
+    private Integer visitNums;
 
     public User(String username, String password, String email) {
         this.username = username;

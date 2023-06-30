@@ -1,5 +1,6 @@
 package com.sailyang.powerprophet.config;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +13,11 @@ public class MPConfig {
     public MybatisPlusInterceptor mybatisPlusInterceptor(){
         /* 创建MP的拦截器栈 */
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor();
+        paginationInnerInterceptor.setDbType(DbType.MARIADB);
+        paginationInnerInterceptor.setOverflow(true);
         /* 初始化一个分页拦截器，加到拦截器栈中*/
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        interceptor.addInnerInterceptor(paginationInnerInterceptor);
         return interceptor;
     }
 }
