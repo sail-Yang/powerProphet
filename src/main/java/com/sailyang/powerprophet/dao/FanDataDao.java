@@ -42,4 +42,5 @@ public interface FanDataDao extends BaseMapper<FanData> {
 
     @Select("SELECT COUNT(*) FROM fandata")
     int selectDatas();
+
 }

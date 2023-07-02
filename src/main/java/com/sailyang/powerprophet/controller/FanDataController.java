@@ -1,14 +1,16 @@
 package com.sailyang.powerprophet.controller;
 
-import com.sailyang.powerprophet.pojo.FanData;
-import com.sailyang.powerprophet.pojo.R;
+import com.sailyang.powerprophet.pojo.*;
 import com.sailyang.powerprophet.service.FanDataService;
+import com.sailyang.powerprophet.service.FanService;
+import com.sailyang.powerprophet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +19,10 @@ import java.util.Map;
 public class FanDataController {
     @Autowired
     private FanDataService fanDataService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private FanService fanService;
 
     @CrossOrigin
     @PostMapping(value = "/getbyfanid")
@@ -66,15 +72,29 @@ public class FanDataController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "/fans")
+    @GetMapping(value = "/fannums")
     @ResponseBody
-    public R getFans(){
-        Integer fans = fanDataService.getFans();
+    public R getFanNums(){
+        Integer fans = fanService.getFans();
         if(fans == 0){
             return new R(-1,"获取错误,无记录",null);
         }
         Map<String,Object> responseData = new HashMap<>();
         responseData.put("fans",fans);
+        return new R(20000,"获取成功",responseData);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/fans")
+    @ResponseBody
+    public R getFans(@RequestParam(value = "username") String userName){
+        User user = userService.getByUserName(userName);
+        if(user == null){
+            return  new R(-1,"获取错误,该用户不存在",null);
+        }
+        List<FanAndOutliers> fanAndOutliersList = fanService.getFanAndOutliers(user.getId());
+        Map<String,Object> responseData = new HashMap<>();
+        responseData.put("fanlist",fanAndOutliersList);
         return new R(20000,"获取成功",responseData);
     }
 }

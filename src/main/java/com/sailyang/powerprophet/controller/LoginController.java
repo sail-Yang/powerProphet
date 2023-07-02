@@ -133,6 +133,8 @@ public class LoginController {
             String verCodeFromRedis = (String) redisTemplate.opsForValue().get(user.getEmail());
             if(code.equals(verCodeFromRedis)){
                 Map<String,Object> responseData = new HashMap<>();
+                user.setVisitNums(user.getVisitNums() + 1);
+                userService.update(user);
                 session.setAttribute("user",user);
                 String token = createJWT(user.getUsername(),user.getPassword());
                 responseData.put("token",token);

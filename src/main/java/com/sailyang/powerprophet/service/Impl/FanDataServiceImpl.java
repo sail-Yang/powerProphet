@@ -4,14 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sailyang.powerprophet.dao.FanDataDao;
-import com.sailyang.powerprophet.dao.FanDataLogItemDao;
-import com.sailyang.powerprophet.dao.OutlierDao;
-import com.sailyang.powerprophet.dao.UserDao;
-import com.sailyang.powerprophet.pojo.FanData;
-import com.sailyang.powerprophet.pojo.Outlier;
-import com.sailyang.powerprophet.pojo.PreResult;
-import com.sailyang.powerprophet.pojo.User;
+import com.sailyang.powerprophet.dao.*;
+import com.sailyang.powerprophet.pojo.*;
 import com.sailyang.powerprophet.service.FanDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +17,9 @@ import java.util.*;
 public class FanDataServiceImpl extends ServiceImpl<FanDataDao,FanData> implements FanDataService {
     @Autowired
     private FanDataDao fanDataDao;
+
+    @Autowired
+    private FanDao fanDao;
 
     @Override
     public Boolean saves(List<FanData> fanDataList){
@@ -93,10 +90,5 @@ public class FanDataServiceImpl extends ServiceImpl<FanDataDao,FanData> implemen
     @Override
     public Integer getDatas() {
         return fanDataDao.selectDatas();
-    }
-
-    @Override
-    public Integer getFans() {
-        return fanDataDao.selectFans();
     }
 }

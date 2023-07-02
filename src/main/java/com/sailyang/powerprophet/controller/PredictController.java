@@ -1,12 +1,6 @@
 package com.sailyang.powerprophet.controller;
-import com.sailyang.powerprophet.pojo.FanDataLogItem;
-import com.sailyang.powerprophet.pojo.PreResult;
-import com.sailyang.powerprophet.pojo.R;
-import com.sailyang.powerprophet.pojo.User;
-import com.sailyang.powerprophet.service.FanDataLogItemService;
-import com.sailyang.powerprophet.service.FanDataService;
-import com.sailyang.powerprophet.service.OutilerService;
-import com.sailyang.powerprophet.service.UserService;
+import com.sailyang.powerprophet.pojo.*;
+import com.sailyang.powerprophet.service.*;
 import com.sailyang.powerprophet.utils.PredictUtils;
 import com.sailyang.powerprophet.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +34,9 @@ public class PredictController {
 
     @Autowired
     private FanDataLogItemService fanDataLogItemService;
+
+    @Autowired
+    private FanService fanService;
     /*
 
     * */
@@ -58,6 +55,10 @@ public class PredictController {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("fanid", fanId).queryParam("model", model);
         ResponseEntity<String> results = restTemplate.exchange( builder.build().encode().toUri(), HttpMethod.GET, null, String.class);
         if(results.getStatusCode().is2xxSuccessful()){
+            //每次预测都更新对应风机的预测总次数
+            Fan fan = fanService.getById(fanId);
+            fan.setNums(fan.getNums()+1);
+            fanService.updateById(fan);
             /*从深度学习框架获取json格式的预测数据*/
             List<PreResult> preResultList = databinds(results.getBody());
             List<PreResult> prePowerList = fanDataService.getPrePowerByFanIdAndPeriod(preResultList.get(0).getDatatime(),preResultList.get(preResultList.size() - 1).getDatatime(),fanId);
@@ -102,7 +103,11 @@ public class PredictController {
                 .queryParam("model", model);
         ResponseEntity<String> results = restTemplate.exchange( builder.build().encode().toUri(), HttpMethod.GET, null, String.class);
         if(results.getStatusCode().is2xxSuccessful()){
-//            System.out.println(results.getBody());
+            //每次预测都更新对应风机的预测总次数
+            Fan fan = fanService.getById(fanId);
+            fan.setNums(fan.getNums()+1);
+            fanService.updateById(fan);
+
             List<PreResult> preResultList = databinds(results.getBody());
             if(preResultList == null){
                 fanDataLogItemService.save(new FanDataLogItem(user.getId(),fanId,"period",date,beginTime,endTime,"fail",user.getModel()));
