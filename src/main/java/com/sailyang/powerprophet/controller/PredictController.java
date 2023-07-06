@@ -23,6 +23,7 @@ import static com.sailyang.powerprophet.utils.TokenUtils.createJWT;
 public class PredictController {
     @Autowired
     private FanDataService fanDataService;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -51,7 +52,8 @@ public class PredictController {
             return new R(-1, "预测失败,该用户不存在", null);
         }
         //调用深度学习模型
-        String url = "http://localhost:5000/realtime";
+        String url = "http://118.195.146.68:5000/realtime";
+//        String url = "http://localhost:5004/realtime";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("fanid", fanId).queryParam("model", model);
         ResponseEntity<String> results = restTemplate.exchange( builder.build().encode().toUri(), HttpMethod.GET, null, String.class);
         if(results.getStatusCode().is2xxSuccessful()){
@@ -94,7 +96,8 @@ public class PredictController {
         if(user == null){
             return new R(-1, "预测失败,该用户不存在", null);
         }
-        String url = "http://localhost:5000/period";
+//        String url = "http://localhost:5004/period";
+        String url = "http://118.195.146.68:5000/period";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("fanid", fanId)
                 .queryParam("bgtime", beginTime)

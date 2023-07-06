@@ -66,7 +66,7 @@ public class LoginController {
         }
         responseData.put("roles",user.getRole());
         responseData.put("name",user.getUsername());
-        responseData.put("avatar","https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
+        responseData.put("avatar","https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/user_800x800.56lx4mm90a00.jpg");
         return new R(20000,"登录成功",responseData);
     }
 

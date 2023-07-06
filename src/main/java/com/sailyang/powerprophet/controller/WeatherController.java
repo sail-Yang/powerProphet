@@ -49,5 +49,21 @@ public class WeatherController {
         }
     }
 
+    @CrossOrigin
+    @GetMapping(value = "/periodtype")
+    @ResponseBody
+    public R getWeatherByPeriodAndType(@RequestParam(value = "bgtime") Timestamp beginTime, @RequestParam(value ="edtime") Timestamp endTime,@RequestParam(value = "fanid") Integer fanId, @RequestParam(value ="type") String type){
+        if("wind".equals(type)){
+            type = "windspeedAndws";
+        }
+        List<FanData> fanDataList = fanDataService.getByFanIdAndPeriodAndType(beginTime,endTime,fanId,type);
+        if(fanDataList != null &&  fanDataList.size() != 0) {
+            Map<String,Object> responseData = new HashMap<>();
+            responseData.put("fanDataList", fanDataList);
+            return new R(20000,"获取成功",responseData);
+        }else{
+            return  new R(-1,"获取错误,该记录不存在",null);
+        }
+    }
 
 }

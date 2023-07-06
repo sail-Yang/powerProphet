@@ -83,6 +83,15 @@ public class FanDataServiceImpl extends ServiceImpl<FanDataDao,FanData> implemen
     }
 
     @Override
+    public List<FanData> getByFanIdAndPeriodAndType(Timestamp beginTime, Timestamp endTime,Integer fanId,String type) {
+        if("windspeedAndws".equals(type)){
+            return fanDataDao.selectWindListByFanIdAndPeriodAndType(beginTime,endTime,fanId);
+        }else{
+            return fanDataDao.selectFanDataListByFanIdAndPeriodAndType(beginTime,endTime,fanId,type);
+        }
+    }
+
+    @Override
     public  List<PreResult> getPrePowerByFanIdAndPeriod(Timestamp beginTime, Timestamp endTime,Integer fanId){
         return fanDataDao.selectPrePowerByFanIdAndPeriod(beginTime,endTime,fanId);
     }

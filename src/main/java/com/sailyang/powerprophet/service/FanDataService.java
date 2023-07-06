@@ -20,6 +20,7 @@ public interface FanDataService extends IService<FanData> {
     List<String> getFanIds();
     FanData getByFanIdAndTime(Timestamp time, Integer fanId);
     List<FanData> getByFanIdAndPeriod(Timestamp beginTime, Timestamp endTime,Integer fanId);
+    List<FanData> getByFanIdAndPeriodAndType(Timestamp beginTime, Timestamp endTime,Integer fanId,String type);
     List<PreResult> getPrePowerByFanIdAndPeriod(Timestamp beginTime, Timestamp endTime,Integer fanId);
     Integer getDatas();
 }

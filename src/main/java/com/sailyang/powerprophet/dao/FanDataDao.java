@@ -26,6 +26,12 @@ public interface FanDataDao extends BaseMapper<FanData> {
     @Select("select * from fandata where fan_id = #{fanid} AND datatime >= #{bgtime} AND datatime <= #{edtime}")
     List<FanData> selectFanDataListByFanIdAndPeriod(@Param("bgtime") Timestamp begintime,@Param("edtime") Timestamp endtime,@Param("fanid") Integer fanId);
 
+    @Select("select datatime,windspeed,ws from fandata where fan_id = #{fanid} AND datatime >= #{bgtime} AND datatime <= #{edtime}")
+    List<FanData> selectWindListByFanIdAndPeriodAndType(@Param("bgtime") Timestamp begintime,@Param("edtime") Timestamp endtime,@Param("fanid") Integer fanId);
+
+    @Select("select datatime,${type} from fandata where fan_id = #{fanid} AND datatime >= #{bgtime} AND datatime <= #{edtime}")
+    List<FanData> selectFanDataListByFanIdAndPeriodAndType(@Param("bgtime") Timestamp begintime,@Param("edtime") Timestamp endtime,@Param("fanid") Integer fanId,@Param("type") String type);
+
     @Select("select datatime,prepower from fandata where fan_id = #{fanid} AND datatime >= #{bgtime} AND datatime <= #{edtime}")
     List<PreResult> selectPrePowerByFanIdAndPeriod(@Param("bgtime") Timestamp begintime,@Param("edtime") Timestamp endtime,@Param("fanid") Integer fanId);
 

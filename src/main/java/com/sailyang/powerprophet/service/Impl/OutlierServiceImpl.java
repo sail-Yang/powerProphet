@@ -47,9 +47,11 @@ public class OutlierServiceImpl extends ServiceImpl<OutlierDao, Outlier> impleme
         User user = userDao.selectById(useId);
         int min_right = user.getMinRight();
         int max_right = user.getMaxRight();
-        preResultList.removeIf(element -> element.getYd15() <= max_right && element.getYd15() >= min_right);
+        List<PreResult> subPreResultList = new LinkedList<>();
+        subPreResultList.addAll(preResultList);
+        subPreResultList.removeIf(element -> element.getYd15() <= max_right && element.getYd15() >= min_right);
         List<Outlier> outlierList = new LinkedList<>();
-        for(PreResult e : preResultList) {
+        for(PreResult e : subPreResultList) {
             outlierList.add(new Outlier(logId,e.getPower(),e.getYd15(),e.getDatatime()));
         }
         return  outlierDao.addOutliers(logId,fanId,outlierList) > 0;
