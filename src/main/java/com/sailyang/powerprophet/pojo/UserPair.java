@@ -7,11 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FanAndOutliers {
+public class UserPair {
     private Integer id;
-    private String name;
-    private Integer nums;
-    private Integer userId;
-    private String userName;
-    private Integer outliers;
+    private String username;
 }

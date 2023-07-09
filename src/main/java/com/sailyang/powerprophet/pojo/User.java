@@ -22,7 +22,7 @@ public class User implements Serializable {
     @TableField("password")
     private String password;
     @TableField("roles")
-    private String role;
+    private String roles;
     @TableField("email")
     private String email;
     @TableField("model")

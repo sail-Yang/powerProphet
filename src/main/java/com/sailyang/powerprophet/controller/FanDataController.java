@@ -2,8 +2,10 @@ package com.sailyang.powerprophet.controller;
 
 import com.sailyang.powerprophet.pojo.*;
 import com.sailyang.powerprophet.service.FanDataService;
+import com.sailyang.powerprophet.service.FanLogItemService;
 import com.sailyang.powerprophet.service.FanService;
 import com.sailyang.powerprophet.service.UserService;
+import com.sailyang.powerprophet.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +25,9 @@ public class FanDataController {
     private UserService userService;
     @Autowired
     private FanService fanService;
+
+    @Autowired
+    private FanLogItemService fanLogItemService;
 
     @CrossOrigin
     @PostMapping(value = "/getbyfanid")
@@ -96,5 +101,37 @@ public class FanDataController {
         Map<String,Object> responseData = new HashMap<>();
         responseData.put("fanlist",fanAndOutliersList);
         return new R(20000,"获取成功",responseData);
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "/fanuser")
+    @ResponseBody
+    public R updateFanUser(@RequestParam(value = "fanid") Integer fanId, @RequestParam(value = "username") String userName){
+        if(!"cancel".equals(userName)){
+            User user = userService.getByUserName(userName);
+            if(user == null){
+                return  new R(-1,"获取错误,该用户不存在",null);
+            }
+            boolean flag1 = fanService.updateFanUser(fanId, user.getId());
+            if(!flag1){
+                return  new R(-1,"更新维修人员失败",null);
+            }
+            boolean flag2 = fanLogItemService.addLogItem(fanId,user.getId());
+            if(!flag2){
+                return  new R(-1,"添加维修日志日志失败",null);
+            }
+            return new R(20000,"成功",null);
+        }else{
+            Fan fan = fanService.getById(fanId);
+            boolean flag1 = fanService.updateFanUser(fanId, 0);
+            if(!flag1){
+                return  new R(-1,"取消维修人员失败",null);
+            }
+            boolean flag2 = fanLogItemService.updateLogItemByMulti(fanId,fan.getUserId(),"yes", TimeUtils.getNowTime());
+            if(!flag2){
+                return  new R(-1,"更新维修日志失败",null);
+            }
+            return new R(20000,"成功",null);
+        }
     }
 }

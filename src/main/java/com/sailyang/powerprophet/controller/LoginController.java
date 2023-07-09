@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +66,9 @@ public class LoginController {
         if(user == null){
             return new R(50008,"Login failed, unable to get user details.",responseData);
         }
-        responseData.put("roles",user.getRole());
+        List<String> roles = new ArrayList<>();
+        roles.add(user.getRoles());
+        responseData.put("roles",roles);
         responseData.put("name",user.getUsername());
         responseData.put("avatar","https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/user_800x800.56lx4mm90a00.jpg");
         return new R(20000,"登录成功",responseData);

@@ -21,4 +21,6 @@ public class Fan implements Serializable {
     private String name;
     @TableField("nums")
     private Integer nums;
+    @TableField("user_id")
+    private Integer userId;
 }

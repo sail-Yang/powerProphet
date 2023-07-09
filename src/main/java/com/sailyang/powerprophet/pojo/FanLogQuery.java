@@ -4,16 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LogQuery implements Serializable {
+public class FanLogQuery {
     private Integer page;
     private Integer limit;
-    private String type;
-    private String model;
+    private String status;
     private Integer fanid;
     private String username;
 }
