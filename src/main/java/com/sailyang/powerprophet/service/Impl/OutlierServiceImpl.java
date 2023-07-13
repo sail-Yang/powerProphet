@@ -49,10 +49,10 @@ public class OutlierServiceImpl extends ServiceImpl<OutlierDao, Outlier> impleme
         int max_right = user.getMaxRight();
         List<PreResult> subPreResultList = new LinkedList<>();
         subPreResultList.addAll(preResultList);
-        subPreResultList.removeIf(element -> element.getYd15() <= max_right && element.getYd15() >= min_right);
+        subPreResultList.removeIf(element -> element.getYd15Pre() <= max_right && element.getYd15Pre() >= min_right);
         List<Outlier> outlierList = new LinkedList<>();
         for(PreResult e : subPreResultList) {
-            outlierList.add(new Outlier(logId,e.getPower(),e.getYd15(),e.getDatatime()));
+            outlierList.add(new Outlier(logId,e.getPower(),e.getYd15Pre(),e.getDatatime()));
         }
         return  outlierDao.addOutliers(logId,fanId,outlierList) > 0;
     }

@@ -3,6 +3,7 @@ package com.sailyang.powerprophet.controller;
 import com.sailyang.powerprophet.pojo.R;
 import com.sailyang.powerprophet.pojo.SignUpInfo;
 import com.sailyang.powerprophet.pojo.User;
+import com.sailyang.powerprophet.pojo.UserNameAndId;
 import com.sailyang.powerprophet.service.UserService;
 import com.sailyang.powerprophet.utils.TokenUtils;
 import jakarta.servlet.http.HttpSession;
@@ -86,8 +87,10 @@ public class LoginController {
     @GetMapping(value = "/getusernames")
     @ResponseBody
     public R getUserNames(){
-        List<String> usernames = userService.getUserNames();
-        return new R(20000,"获取用户名列表成功",usernames);
+        HashMap<String, Object> responseData = new HashMap<>();
+        List<UserNameAndId> userList = userService.getUserNames();
+        responseData.put("users",userList);
+        return new R(20000,"获取用户名列表成功",responseData);
     }
 
     @CrossOrigin

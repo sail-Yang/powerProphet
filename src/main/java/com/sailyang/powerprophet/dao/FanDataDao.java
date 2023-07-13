@@ -32,7 +32,7 @@ public interface FanDataDao extends BaseMapper<FanData> {
     @Select("select datatime,${type} from fandata where fan_id = #{fanid} AND datatime >= #{bgtime} AND datatime <= #{edtime}")
     List<FanData> selectFanDataListByFanIdAndPeriodAndType(@Param("bgtime") Timestamp begintime,@Param("edtime") Timestamp endtime,@Param("fanid") Integer fanId,@Param("type") String type);
 
-    @Select("select datatime,prepower from fandata where fan_id = #{fanid} AND datatime >= #{bgtime} AND datatime <= #{edtime}")
+    @Select("select datatime,yd15 from fandata where fan_id = #{fanid} AND datatime >= #{bgtime} AND datatime <= #{edtime}")
     List<PreResult> selectPrePowerByFanIdAndPeriod(@Param("bgtime") Timestamp begintime,@Param("edtime") Timestamp endtime,@Param("fanid") Integer fanId);
 
     @Update({"<script>",
@@ -49,4 +49,6 @@ public interface FanDataDao extends BaseMapper<FanData> {
     @Select("SELECT COUNT(*) FROM fandata")
     int selectDatas();
 
+    @Select("select AVG(yd15) from fandata WHERE datatime >= #{bgtime} AND datatime <= #{edtime}")
+    Float selectAvgPower(@Param("bgtime")Timestamp bgTime, @Param("edtime")Timestamp edTime);
 }

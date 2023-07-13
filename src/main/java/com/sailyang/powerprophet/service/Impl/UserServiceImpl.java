@@ -2,6 +2,7 @@ package com.sailyang.powerprophet.service.Impl;
 
 import com.sailyang.powerprophet.dao.UserDao;
 import com.sailyang.powerprophet.pojo.User;
+import com.sailyang.powerprophet.pojo.UserNameAndId;
 import com.sailyang.powerprophet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,6 @@ public class UserServiceImpl implements UserService {
     public User getByEmail(String email){ return userDao.selectByEmail(email); }
 
     @Override
-    public List<String> getUserNames() { return userDao.selectUserNames(); }
+    public List<UserNameAndId> getUserNames() { return userDao.selectUserNames(); }
 
 }

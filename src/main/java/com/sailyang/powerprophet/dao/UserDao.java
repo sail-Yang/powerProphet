@@ -2,6 +2,7 @@ package com.sailyang.powerprophet.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sailyang.powerprophet.pojo.User;
+import com.sailyang.powerprophet.pojo.UserNameAndId;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -16,8 +17,8 @@ public interface UserDao extends BaseMapper<User> {
     @Select("select * from users where email = #{email}")
     User selectByEmail(@Param("email") String email);
 
-    @Select("select username from users")
-    List<String> selectUserNames();
+    @Select("select id,username from users")
+    List<UserNameAndId> selectUserNames();
 
     @Select("select * from users where id = #{id}")
     User selectById(@Param("id") Integer id);

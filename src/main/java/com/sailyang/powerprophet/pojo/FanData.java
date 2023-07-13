@@ -46,4 +46,6 @@ public class FanData implements Serializable {
     @TableField("yd15")
     private Float yd15;
 
+    @TableField("yd15_pre")
+    private Float yd15Pre;
 }

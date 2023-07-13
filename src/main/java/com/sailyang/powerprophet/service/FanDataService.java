@@ -22,5 +22,6 @@ public interface FanDataService extends IService<FanData> {
     List<FanData> getByFanIdAndPeriod(Timestamp beginTime, Timestamp endTime,Integer fanId);
     List<FanData> getByFanIdAndPeriodAndType(Timestamp beginTime, Timestamp endTime,Integer fanId,String type);
     List<PreResult> getPrePowerByFanIdAndPeriod(Timestamp beginTime, Timestamp endTime,Integer fanId);
+    Float getAvgPower(Timestamp beTime, Timestamp edTime);
     Integer getDatas();
 }

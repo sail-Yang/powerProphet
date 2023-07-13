@@ -100,4 +100,9 @@ public class FanDataServiceImpl extends ServiceImpl<FanDataDao,FanData> implemen
     public Integer getDatas() {
         return fanDataDao.selectDatas();
     }
+
+    @Override
+    public Float getAvgPower(Timestamp beTime, Timestamp edTime) {
+        return fanDataDao.selectAvgPower(beTime, edTime);
+    }
 }

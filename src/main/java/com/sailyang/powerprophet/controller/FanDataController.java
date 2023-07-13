@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -107,6 +108,7 @@ public class FanDataController {
     @PostMapping(value = "/fanuser")
     @ResponseBody
     public R updateFanUser(@RequestParam(value = "fanid") Integer fanId, @RequestParam(value = "username") String userName){
+        Map<String,Object> responseData = new HashMap<>();
         if(!"cancel".equals(userName)){
             User user = userService.getByUserName(userName);
             if(user == null){
@@ -120,7 +122,8 @@ public class FanDataController {
             if(!flag2){
                 return  new R(-1,"添加维修日志日志失败",null);
             }
-            return new R(20000,"成功",null);
+            responseData.put("id",user.getId());
+            return new R(20000,"成功",responseData);
         }else{
             Fan fan = fanService.getById(fanId);
             boolean flag1 = fanService.updateFanUser(fanId, 0);
@@ -133,5 +136,18 @@ public class FanDataController {
             }
             return new R(20000,"成功",null);
         }
+    }
+
+    @CrossOrigin
+    @GetMapping(value="/getavg")
+    @ResponseBody
+    public R getAvgPower() {
+        Map<String,Object> responseData = new HashMap<>();
+        Timestamp bgTime = Timestamp.valueOf("2021-09-30 00:00:00");
+        Timestamp edTime = Timestamp.valueOf("2021-09-30 23:45:00");
+        Float avgPower = fanDataService.getAvgPower(bgTime,edTime);
+        avgPower = (float)(Math.round(avgPower*100))/100;
+        responseData.put("avg",avgPower);
+        return new R(20000,"成功",responseData);
     }
 }

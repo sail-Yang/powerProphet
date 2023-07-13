@@ -1,6 +1,7 @@
 package com.sailyang.powerprophet.service;
 
 import com.sailyang.powerprophet.pojo.User;
+import com.sailyang.powerprophet.pojo.UserNameAndId;
 
 import java.util.List;
 
@@ -12,5 +13,5 @@ public interface UserService {
     User getByUserName(String userName);
     User getByEmail(String email);
     List<User> getAll();
-    List<String> getUserNames();
+    List<UserNameAndId> getUserNames();
 }

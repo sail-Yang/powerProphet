@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("fandata1")
+@TableName("fandata")
 public class PreResult implements Serializable {
     @TableField("datatime")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",  timezone="GMT+8")
@@ -22,6 +22,6 @@ public class PreResult implements Serializable {
     private Float power;
     @TableField("yd15")
     private Float yd15;
-    @TableField("prepower")
-    private Float prePower;
+    @TableField("yd15_pre")
+    private Float yd15Pre;
 }

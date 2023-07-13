@@ -9,7 +9,7 @@ public class PredictUtils {
         int a = 0, b = 0;
         while(b < prePowerList.size() && a < preResultList.size()){
             if(prePowerList.get(b).getDatatime().equals(preResultList.get(a).getDatatime())){
-                preResultList.get(a).setPrePower(prePowerList.get(b).getPrePower());
+                preResultList.get(a).setYd15(prePowerList.get(b).getYd15());
                 a++;b++;
             }else{
                 a++;
