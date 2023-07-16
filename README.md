@@ -59,10 +59,10 @@ server:
 
 ```java
 // 第55行 调用深度学习模型，填写实时预测模块接口IP端口地址
-String url = "http://118.195.146.68:5001/realtime";
+String url = "http://127.0.0.1:5001/realtime";
 
 //第99行 调用深度学习模型，填写自定义预测模块接口IP端口地址
-String url = "http://118.195.146.68:5001/period";
+String url = "http://127.0.0.1:5001/period";
 ```
 
 ## 数据库创建
