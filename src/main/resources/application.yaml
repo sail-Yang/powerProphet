@@ -5,13 +5,13 @@ spring:
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mariadb://111.231.32.48:3306/powerProphet?characterEncoding=utf-8&useSSL=false&useTimezone=true&serverTimezone=GMT%2B8&rewriteBatchedStatements=true&allowMultiQueries=true
+    url: jdbc:mariadb://127.0.0.1:3306/powerProphet?characterEncoding=utf-8&useSSL=false&useTimezone=true&serverTimezone=GMT%2B8&rewriteBatchedStatements=true&allowMultiQueries=true
   mail:
     host: smtp.qq.com
     protocol: smtp
     default-encoding: UTF-8
     username: 1186599081@qq.com
-    password: tswohohzeghgiifi
+    password: 123445
     properties:
       mail:
         smtp:
@@ -20,7 +20,7 @@ spring:
             required: false
   data:
     redis:
-      host: 111.231.32.48
+      host: 127.0.0.1
       port: 6379
       password: 123456
       database: 0
