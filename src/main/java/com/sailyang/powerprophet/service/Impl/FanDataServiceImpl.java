@@ -105,4 +105,9 @@ public class FanDataServiceImpl extends ServiceImpl<FanDataDao,FanData> implemen
     public Float getAvgPower(Timestamp beTime, Timestamp edTime) {
         return fanDataDao.selectAvgPower(beTime, edTime);
     }
+
+    @Override
+    public TimePair getTimeRange(Integer fanId) {
+        return fanDataDao.selectTimeRange(fanId);
+    }
 }

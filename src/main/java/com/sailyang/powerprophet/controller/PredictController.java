@@ -55,7 +55,13 @@ public class PredictController {
         String url = "http://118.195.146.68:5001/realtime";
 //        String url = "http://localhost:5000/realtime";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("fanid", fanId).queryParam("model", model);
-        ResponseEntity<String> results = restTemplate.exchange( builder.build().encode().toUri(), HttpMethod.GET, null, String.class);
+        ResponseEntity<String> results;
+        try {
+            results = restTemplate.exchange( builder.build().encode().toUri(), HttpMethod.GET, null, String.class);
+        }catch (Exception e){
+            return new R(-1, "预测失败,数据集不足", null);
+        }
+
         if(results.getStatusCode().is2xxSuccessful()){
             //每次预测都更新对应风机的预测总次数
             Fan fan = fanService.getById(fanId);
@@ -67,18 +73,12 @@ public class PredictController {
             List<PreResult> resultList = PredictUtils.joinPreResult(preResultList, yd15List);
             Map<String,Object> responseData = new HashMap<>();
             responseData.put("fanDataList",resultList);
-            boolean res = fanDataService.updates(1,preResultList);
-            if(!res){
-                /* 生成日志记录 */
-                fanDataLogItemService.save(new FanDataLogItem(user.getId(),fanId,"real",date,preResultList.get(0).getDatatime(),preResultList.get(preResultList.size() - 1).getDatatime(),"fail",user.getModel()));
-                return new R(-1, "预测失败", null);
-            }else{
-                /* 生成日志记录 */
-                FanDataLogItem newItem = new FanDataLogItem(user.getId(),fanId,"real",date,preResultList.get(0).getDatatime(),preResultList.get(preResultList.size() - 1).getDatatime(),"success",user.getModel());
-                fanDataLogItemService.save(newItem);
-                outilerService.addOutliers(newItem.getId(),fanId,user.getId(),preResultList);
-                return new R(20000, "预测成功", responseData);
-            }
+            //这里注释了Insert yd15_Pre
+            /* 生成日志记录 */
+            FanDataLogItem newItem = new FanDataLogItem(user.getId(),fanId,"real",date,preResultList.get(0).getDatatime(),preResultList.get(preResultList.size() - 1).getDatatime(),"success",user.getModel());
+            fanDataLogItemService.save(newItem);
+            outilerService.addOutliers(newItem.getId(),fanId,user.getId(),preResultList);
+            return new R(20000, "预测成功", responseData);
         }else{
             /* 生成日志记录 */
             fanDataLogItemService.save(new FanDataLogItem(user.getId(), fanId,"real",date,null,null,"fail",user.getModel()));
@@ -104,7 +104,12 @@ public class PredictController {
                 .queryParam("edtime", endTime)
                 .queryParam("hours", hours)
                 .queryParam("model", model);
-        ResponseEntity<String> results = restTemplate.exchange( builder.build().encode().toUri(), HttpMethod.GET, null, String.class);
+        ResponseEntity<String> results;
+        try {
+            results = restTemplate.exchange( builder.build().encode().toUri(), HttpMethod.GET, null, String.class);
+        }catch (Exception e){
+            return new R(-1, "预测失败,数据集不足", null);
+        }
         if(results.getStatusCode().is2xxSuccessful()){
             //每次预测都更新对应风机的预测总次数
             Fan fan = fanService.getById(fanId);

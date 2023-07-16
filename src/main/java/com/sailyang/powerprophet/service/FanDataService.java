@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sailyang.powerprophet.pojo.FanData;
 import com.sailyang.powerprophet.pojo.PreResult;
+import com.sailyang.powerprophet.pojo.TimePair;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -23,5 +24,6 @@ public interface FanDataService extends IService<FanData> {
     List<FanData> getByFanIdAndPeriodAndType(Timestamp beginTime, Timestamp endTime,Integer fanId,String type);
     List<PreResult> getPrePowerByFanIdAndPeriod(Timestamp beginTime, Timestamp endTime,Integer fanId);
     Float getAvgPower(Timestamp beTime, Timestamp edTime);
+    TimePair getTimeRange(Integer fanId);
     Integer getDatas();
 }

@@ -150,4 +150,18 @@ public class FanDataController {
         responseData.put("avg",avgPower);
         return new R(20000,"成功",responseData);
     }
+
+    @CrossOrigin
+    @GetMapping(value = "/timerange")
+    @ResponseBody
+    public R getTimerRange(@RequestParam(value = "fanid") Integer fanId) {
+        Map<String,Object> responseData = new HashMap<>();
+        TimePair timePair = fanDataService.getTimeRange(fanId);
+        if(timePair == null){
+            return new R(-1,"获取训练集时间范围失败!",null);
+        }
+        responseData.put("min",timePair.getMinTime());
+        responseData.put("max",timePair.getMaxTime());
+        return new R(20000,"成功",responseData);
+    }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sailyang.powerprophet.pojo.Fan;
 import com.sailyang.powerprophet.pojo.FanData;
 import com.sailyang.powerprophet.pojo.PreResult;
+import com.sailyang.powerprophet.pojo.TimePair;
 import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
@@ -37,8 +38,8 @@ public interface FanDataDao extends BaseMapper<FanData> {
 
     @Update({"<script>",
             "<foreach collection='list' item= 'item' index ='index' separator=';'>",
-            "insert into fandata(power,yd15,datatime,fan_id) values(#{item.power},#{item.yd15},#{item.datatime},#{fanid})",
-            "on duplicate key update power = #{item.power},yd15 = #{item.yd15}",
+            "insert into fandata(yd15_pre,datatime,fan_id) values(#{item.yd15Pre},#{item.datatime},#{fanid})",
+            "on duplicate key update yd15_pre = #{item.yd15Pre}",
             "</foreach>",
             "</script>"})
     int updatePreResultByFanId(@Param("fanid")Integer fanId,@Param("list") List<PreResult> preResultList);
@@ -51,4 +52,7 @@ public interface FanDataDao extends BaseMapper<FanData> {
 
     @Select("select AVG(yd15) from fandata WHERE datatime >= #{bgtime} AND datatime <= #{edtime}")
     Float selectAvgPower(@Param("bgtime")Timestamp bgTime, @Param("edtime")Timestamp edTime);
+
+    @Select("SELECT MIN(datatime) AS min_time,MAX(datatime) AS max_time FROM fandata WHERE fan_id = #{fanid}")
+    TimePair selectTimeRange(@Param("fanid")Integer fanId);
 }
